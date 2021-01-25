@@ -47,7 +47,7 @@ protected:
 private:
 
     QMatrix4x4 _projectionMatrix;
-    QOpenGLShaderProgram _program;
+    QOpenGLShaderProgram _renderProgram;
     QOpenGLTexture* _texture;
     QOpenGLBuffer _arrayBuffer;
     QOpenGLBuffer _indexBuffer;
