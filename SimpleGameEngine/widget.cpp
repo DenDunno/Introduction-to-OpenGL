@@ -1,5 +1,7 @@
 #include "widget.h"
 
+#include <QMouseEvent>
+
 Widget::Widget(QWidget *parent): QOpenGLWidget(parent)
 {
     _texture = nullptr;
@@ -39,37 +41,82 @@ void Widget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    QMatrix4x4 cubeModelViewMatrix;
-    cubeModelViewMatrix.setToIdentity();// камера установлена в 0, видовая матрица = E
-    cubeModelViewMatrix.translate(0 , 0 , -5);
-    cubeModelViewMatrix.rotate(30 , 1 , 0 , 0);
-    cubeModelViewMatrix.rotate(30 , 0 , 1 , 0);
+    QMatrix4x4 modelMatrix;
+    modelMatrix.setToIdentity(); // камера установлена в 0, видовая матрица = E
+    modelMatrix.translate(0 , 0 , -2.5);
+    modelMatrix.rotate(_rotation);
 
+
+    QMatrix4x4 viewMatrix;
+    viewMatrix.setToIdentity();
 
     _texture->bind(0);
 
     _renderProgram.bind();
-    _renderProgram.setUniformValue("qt_ModelViewProjectionMatrix" , _projectionMatrix * cubeModelViewMatrix);
-    _renderProgram.setUniformValue("qt_Texture0" , 0);
+    _renderProgram.setUniformValue("u_projectionMatrix" , _projectionMatrix);
+    _renderProgram.setUniformValue("u_modelMatrix" , modelMatrix);
+    _renderProgram.setUniformValue("u_viewMatrix" , viewMatrix);
+    _renderProgram.setUniformValue("u_texture" , 0);
+    _renderProgram.setUniformValue("u_lightPosition" , QVector4D(0 , 0 , 0 , 1));
+    _renderProgram.setUniformValue("u_lightPower" , 5.0f);
 
     _arrayBuffer.bind();
 
 
     int offset = 0;
 
-    int vertexLoc = _renderProgram.attributeLocation("qt_Vertex");
+    int vertexLoc = _renderProgram.attributeLocation("a_position");
     _renderProgram.enableAttributeArray(vertexLoc);
     _renderProgram.setAttributeBuffer(vertexLoc, GL_FLOAT , offset , 3 , sizeof (VertexData));
 
     offset += sizeof (QVector3D);
 
-    int textLoc = _renderProgram.attributeLocation("qt_MultiTexCoord0");
+    int textLoc = _renderProgram.attributeLocation("a_textCoord");
     _renderProgram.enableAttributeArray(textLoc);
     _renderProgram.setAttributeBuffer(textLoc, GL_FLOAT , offset , 2 , sizeof (VertexData));
+
+
+    offset += sizeof (QVector2D);
+
+    int normalLoc = _renderProgram.attributeLocation("a_normal");
+    _renderProgram.enableAttributeArray(normalLoc);
+    _renderProgram.setAttributeBuffer(normalLoc, GL_FLOAT , offset , 3 , sizeof (VertexData));
+
 
     _indexBuffer.bind();
 
     glDrawElements(GL_TRIANGLES , _indexBuffer.size() , GL_UNSIGNED_INT , nullptr);
+}
+
+
+
+void Widget::mousePressEvent(QMouseEvent *event)
+{
+    if (event->buttons() == Qt::LeftButton)
+    {
+        _mousePosition = (QVector2D)event->localPos();
+    }
+
+    event->accept();
+}
+
+
+void Widget::mouseMoveEvent(QMouseEvent *event)
+{
+    if (event->buttons() != Qt::LeftButton)
+        return;
+
+    QVector2D currentPosition = (QVector2D)event->localPos();
+
+    QVector2D delta = currentPosition - _mousePosition;
+    _mousePosition = currentPosition;
+
+    float angle = delta.length() / 2;
+    QVector3D rotationVector = QVector3D(delta.y() , delta.x() , 0);
+
+    _rotation = QQuaternion::fromAxisAndAngle(rotationVector , angle) * _rotation;
+
+    update();
 }
 
 

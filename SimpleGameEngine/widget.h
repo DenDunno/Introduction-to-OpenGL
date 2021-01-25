@@ -41,6 +41,9 @@ protected:
     void resizeGL(int width , int height);
     void paintGL();
 
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
+
     void initShaders();
     void initCube(float width);
 
@@ -51,6 +54,9 @@ private:
     QOpenGLTexture* _texture;
     QOpenGLBuffer _arrayBuffer;
     QOpenGLBuffer _indexBuffer;
+
+    QVector2D _mousePosition;
+    QQuaternion _rotation;
 };
 
 #endif // WIDGET_H
