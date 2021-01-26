@@ -8,22 +8,7 @@
 #include <QOpenGLBuffer>
 
 
-struct VertexData
-{
-    QVector3D Position;
-    QVector2D TexturePosition;
-    QVector3D Normal;
-
-    VertexData() { }
-
-    VertexData(QVector3D position , QVector2D texturePosition , QVector3D normal)
-    {
-        Position = position;
-        TexturePosition = texturePosition;
-        Normal = normal;
-    }
-};
-
+class SimpleObject3D;
 
 
 class Widget : public QOpenGLWidget
@@ -32,8 +17,7 @@ class Widget : public QOpenGLWidget
 
 public:
 
-    Widget(QWidget *parent = nullptr);
-    ~Widget();
+    Widget(QWidget *parent = 0);
 
 protected:
 
@@ -51,12 +35,11 @@ private:
 
     QMatrix4x4 _projectionMatrix;
     QOpenGLShaderProgram _renderProgram;
-    QOpenGLTexture* _texture;
-    QOpenGLBuffer _arrayBuffer;
-    QOpenGLBuffer _indexBuffer;
 
     QVector2D _mousePosition;
     QQuaternion _rotation;
+
+    QVector<SimpleObject3D* > _objects;
 };
 
 #endif // WIDGET_H

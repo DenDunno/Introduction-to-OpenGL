@@ -10,9 +10,11 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
+    simpleobject3d.cpp \
     widget.cpp
 
 HEADERS += \
+    simpleobject3d.h \
     widget.h
 
 LIBS += -lOpengl32
