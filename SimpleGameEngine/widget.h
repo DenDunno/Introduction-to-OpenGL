@@ -15,9 +15,16 @@ class Widget : public QOpenGLWidget
 {
     Q_OBJECT
 
-public:
+private:
 
-    Widget(QWidget *parent = 0);
+    QVector<SimpleObject3D* > _objects;
+    QOpenGLShaderProgram _renderProgram;
+
+    QMatrix4x4 _projectionMatrix;
+    QVector2D _mousePosition;
+    QQuaternion _rotation;
+    float _viewMatrix_Z;
+
 
 protected:
 
@@ -27,19 +34,16 @@ protected:
 
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
+    void wheelEvent(QWheelEvent* event);
 
     void initShaders();
     void initCube(float width);
 
-private:
 
-    QMatrix4x4 _projectionMatrix;
-    QOpenGLShaderProgram _renderProgram;
+public:
 
-    QVector2D _mousePosition;
-    QQuaternion _rotation;
+    Widget(QWidget *parent = 0);
 
-    QVector<SimpleObject3D* > _objects;
 };
 
 #endif // WIDGET_H

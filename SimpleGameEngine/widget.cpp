@@ -6,6 +6,7 @@
 
 Widget::Widget(QWidget *parent): QOpenGLWidget(parent)
 {
+    _viewMatrix_Z = -3.5;
 }
 
 
@@ -18,10 +19,10 @@ void Widget::initializeGL()
 
     initShaders();
     initCube(1);
-    _objects[0]->Translate(QVector3D(-1 , 0 , 0));
+    _objects[0]->Translate(QVector3D(-0.6 , 0 , 0));
 
     initCube(1);
-    _objects[1]->Translate(QVector3D(1, 0 , 0));
+    _objects[1]->Translate(QVector3D(0.6, 0 , 0));
 }
 
 
@@ -40,7 +41,7 @@ void Widget::paintGL()
 
     QMatrix4x4 viewMatrix;
     viewMatrix.setToIdentity();
-    viewMatrix.translate(0 , 0 , -3.5);
+    viewMatrix.translate(0 , 0 , _viewMatrix_Z);
     viewMatrix.rotate(_rotation);
 
     _renderProgram.bind();
@@ -82,8 +83,26 @@ void Widget::mouseMoveEvent(QMouseEvent* event)
 
     _rotation = QQuaternion::fromAxisAndAngle(rotationVector , angle) * _rotation;
 
+    event->accept();
     update();
 }
+
+
+void Widget::wheelEvent(QWheelEvent* event)
+{
+    float zoomSpeed = 0.25;
+    float delta = event->angleDelta().y();
+
+    if (delta > 0)
+        _viewMatrix_Z += zoomSpeed;
+
+    else if (delta < 0)
+        _viewMatrix_Z -= zoomSpeed;
+
+    event->accept();
+    update();
+}
+
 
 
 void Widget::initShaders()

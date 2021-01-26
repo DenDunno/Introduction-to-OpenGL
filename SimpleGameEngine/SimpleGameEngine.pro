@@ -15,9 +15,10 @@ SOURCES += \
 
 HEADERS += \
     simpleobject3d.h \
+    transformableobject.h \
     widget.h
 
-LIBS += -lOpengl32
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -29,3 +30,11 @@ DISTFILES +=
 RESOURCES += \
     shaders.qrc \
     textures.qrc
+
+
+win32-g*
+{
+    LIBS += -lOpengl32
+}
+
+

@@ -124,7 +124,27 @@ void SimpleObject3D::Draw(QOpenGLShaderProgram* shaderProgram, QOpenGLFunctions*
 
 
 
+void SimpleObject3D::Rotate(const QQuaternion& rotation)
+{
+
+}
+
+
 void SimpleObject3D::Translate(const QVector3D& translateVector)
 {
     _modelMatrix.translate(translateVector);
+}
+
+
+void SimpleObject3D::Scale(const QVector3D& scaleVector)
+{
+
+}
+
+
+
+
+void SimpleObject3D::SetGlobalTransform(QMatrix4x4& globalMatrix)
+{
+
 }

@@ -1,9 +1,11 @@
  #ifndef SIMPLEOBJECT3D_H
 #define SIMPLEOBJECT3D_H
 
+#include "transformableobject.h"
 #include <QOpenGLBuffer>
 #include <QMatrix4x4>
 #include<QVector2D>
+
 
 class QOpenGLTexture;
 class QOpenGLFunctions;
@@ -27,13 +29,19 @@ struct VertexData
 
 
 
-class SimpleObject3D
+class SimpleObject3D : public TransformableObject
 {
 private:
 
+    QQuaternion _rotation;
+    QVector3D _translation;
+    QVector3D _scale;
+
+    QMatrix4x4 _modelMatrix;
+    QMatrix4x4 _globalTransform;
+
     QOpenGLBuffer _vertexesBuffer;
     QOpenGLBuffer _indexesBuffer;
-    QMatrix4x4 _modelMatrix;
     QOpenGLTexture* _texture;
 
     void ClearBuffers();
@@ -48,7 +56,11 @@ public:
     void Init(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture);
     void Draw(QOpenGLShaderProgram* program , QOpenGLFunctions* functions);
 
+    void Rotate(const QQuaternion& rotation);
     void Translate(const QVector3D& translateVector);
+    void Scale(const QVector3D& scaleVector);
+
+    void SetGlobalTransform(QMatrix4x4& globalMatrix);
 };
 
 #endif // SIMPLEOBJECT3D_H
