@@ -6,6 +6,7 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
 #include <QOpenGLBuffer>
+#include <QBasicTimer>
 
 
 class SimpleObject3D;
@@ -28,8 +29,14 @@ private:
     QMatrix4x4 _projectionMatrix;
     QVector2D _mousePosition;
     QQuaternion _rotation;
+
     float _viewMatrix_Z;
 
+    QBasicTimer _timer;
+    float angObj;
+    float angGroup1;
+    float angGroup2;
+    float angMain;
 
 protected:
 
@@ -40,6 +47,7 @@ protected:
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
     void wheelEvent(QWheelEvent* event);
+    void timerEvent(QTimerEvent* event);
 
     void initShaders();
     void initCube(float width);

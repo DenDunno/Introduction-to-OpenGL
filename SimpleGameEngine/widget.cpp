@@ -3,6 +3,7 @@
 #include "group3d.h"
 #include <QMouseEvent>
 #include <QOpenGLContext>
+#include <QtMath>
 
 
 Widget::Widget(QWidget *parent): QOpenGLWidget(parent)
@@ -20,8 +21,10 @@ void Widget::initializeGL()
 
     initShaders();
 
+
     float step = 2.0f;
 
+    _groups.push_back(new Group3D());
 
     for (int x = -step ; x <= step ; x += step)
     {
@@ -31,11 +34,38 @@ void Widget::initializeGL()
             {
                 initCube(1);
                 _singleObjects.back()->Translate(QVector3D(x , y , z));
+                _groups.back()->AddObject(_singleObjects.back());
+            }
+        }
+    }   
 
+    _groups.back()->Translate(QVector3D(-4 , 0 , 0));
+
+    _groups.push_back(new Group3D());
+
+    for (int x = -step ; x <= step ; x += step)
+    {
+        for (int y = -step ; y <= step ; y += step)
+        {
+            for (int z = -step ; z <= step ; z += step)
+            {
+                initCube(1);
+                _singleObjects.back()->Translate(QVector3D(x , y , z));
+                _groups.back()->AddObject(_singleObjects.back());
             }
         }
     }
 
+    _groups.back()->Translate(QVector3D(4 , 0 , 0));
+
+
+    _groups.push_back(new Group3D());
+    _groups.back()->AddObject(_groups[0]);
+    _groups.back()->AddObject(_groups[1]);
+
+
+    _transformableObjects.push_back(_groups.back());
+    _timer.start(30 , this);
 }
 
 
@@ -44,7 +74,7 @@ void Widget::resizeGL(int width, int height)
     float aspect = width / (float)height;
 
     _projectionMatrix.setToIdentity();
-    _projectionMatrix.perspective(45 , aspect , 0.1 , 10);
+    _projectionMatrix.perspective(45 , aspect , 0.1 , 100);
 }
 
 
@@ -61,7 +91,7 @@ void Widget::paintGL()
     _renderProgram.setUniformValue("u_projectionMatrix" , _projectionMatrix);
     _renderProgram.setUniformValue("u_viewMatrix" , viewMatrix);
     _renderProgram.setUniformValue("u_lightPosition" , QVector4D(0 , 0 , 0 , 1));
-    _renderProgram.setUniformValue("u_lightPower" , 3.0f);
+    _renderProgram.setUniformValue("u_lightPower" , 20.0f);
 
     for (int i = 0 ; i < _transformableObjects.size() ; ++i)
     {
@@ -113,6 +143,41 @@ void Widget::wheelEvent(QWheelEvent* event)
         _viewMatrix_Z -= zoomSpeed;
 
     event->accept();
+    update();
+}
+
+
+void Widget::timerEvent(QTimerEvent* event)
+{
+    for (int i = 0 ; i < _singleObjects.size(); ++i)
+    {
+        if (i % 2 == 0)
+        {
+            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(1 , 0 , 0 , angObj));
+            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angObj));
+        }
+        else
+        {
+            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angObj));
+            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(1 , 0 , 0 , angObj));
+        }
+    }
+
+    _groups[0]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angGroup1));
+    _groups[0]->Rotate(QQuaternion::fromAxisAndAngle(0 , 0 , 1 , angGroup1));
+
+    _groups[1]->Rotate(QQuaternion::fromAxisAndAngle(1 , 0 , 0 , angGroup2));
+    _groups[1]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angGroup2));
+
+    _groups[2]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angMain));
+    _groups[2]->Rotate(QQuaternion::fromAxisAndAngle(0 , 0 , 1 , angMain));
+
+
+    angObj = angObj > 360 ? 0 : angObj + 3;
+    angGroup1 = angGroup1 > 360 ? 0 : angGroup1 + 2;
+    angGroup2 = angGroup2 > 360 ? 0 : angGroup2 + 2;
+    angMain = angMain > 360 ? 0 : angMain + 1;
+
     update();
 }
 
