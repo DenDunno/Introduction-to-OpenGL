@@ -9,6 +9,8 @@
 
 
 class SimpleObject3D;
+class Group3D;
+class TransformableObject;
 
 
 class Widget : public QOpenGLWidget
@@ -17,7 +19,10 @@ class Widget : public QOpenGLWidget
 
 private:
 
-    QVector<SimpleObject3D* > _objects;
+    QVector<SimpleObject3D* > _singleObjects;
+    QVector<Group3D* > _groups;
+    QVector<TransformableObject* > _transformableObjects;
+
     QOpenGLShaderProgram _renderProgram;
 
     QMatrix4x4 _projectionMatrix;

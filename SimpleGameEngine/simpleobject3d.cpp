@@ -4,53 +4,27 @@
 #include <QOpenGLShaderProgram>
 
 
-void SimpleObject3D::InitFields()
+SimpleObject3D::SimpleObject3D() : _indexesBuffer(QOpenGLBuffer::IndexBuffer)
 {
-    _vertexesBuffer = QOpenGLBuffer(QOpenGLBuffer::Type::VertexBuffer);
-    _indexesBuffer = QOpenGLBuffer(QOpenGLBuffer::Type::IndexBuffer);
-    _modelMatrix.setToIdentity();
-    _texture = 0;
+    _globalTransform.setToIdentity();
 }
 
 
-
-SimpleObject3D::SimpleObject3D()
+SimpleObject3D::SimpleObject3D(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture) :
+    _indexesBuffer(QOpenGLBuffer::IndexBuffer)
 {
-    InitFields();
-}
-
-
-SimpleObject3D::SimpleObject3D(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture)
-{
-    InitFields();
+    _globalTransform.setToIdentity();
     Init(vertexData , indexData , texture);
 }
 
 
-void SimpleObject3D::ClearBuffers()
+void SimpleObject3D::Clear()
 {
     if (_indexesBuffer.isCreated() == true)
         _indexesBuffer.destroy();
 
     if (_vertexesBuffer.isCreated() == true)
         _vertexesBuffer.destroy();
-}
-
-
-SimpleObject3D::~SimpleObject3D()
-{
-    ClearBuffers();
-
-    if (_texture != 0)
-        if (_texture->isCreated() == true)
-            _texture->destroy();
-}
-
-
-
-void SimpleObject3D::Init(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture)
-{
-    ClearBuffers();
 
     if (_texture != 0)
     {
@@ -58,9 +32,21 @@ void SimpleObject3D::Init(const QVector<VertexData>& vertexData, const QVector<G
         {
             delete _texture;
             _texture = 0;
-
         }
     }
+}
+
+
+SimpleObject3D::~SimpleObject3D()
+{
+    Clear();
+}
+
+
+
+void SimpleObject3D::Init(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture)
+{
+    Clear();
 
     _vertexesBuffer.create();
     _vertexesBuffer.bind();
@@ -76,8 +62,6 @@ void SimpleObject3D::Init(const QVector<VertexData>& vertexData, const QVector<G
     _texture->setMinificationFilter(QOpenGLTexture::Nearest);
     _texture->setMagnificationFilter(QOpenGLTexture::Linear);
     _texture->setWrapMode(QOpenGLTexture::Repeat);
-
-    _modelMatrix.setToIdentity();
 }
 
 
@@ -88,12 +72,19 @@ void SimpleObject3D::Draw(QOpenGLShaderProgram* shaderProgram, QOpenGLFunctions*
         return;
     }
 
+    QMatrix4x4 modelMatrix;
+    modelMatrix.setToIdentity();
+    modelMatrix.translate(_translation);
+    modelMatrix.rotate(_rotation);
+    modelMatrix.scale(_scale);
+    modelMatrix = _globalTransform * modelMatrix;
+
     _vertexesBuffer.bind();
     _indexesBuffer.bind();
     _texture->bind(0);
 
     shaderProgram->setUniformValue("u_texture" , 0);
-    shaderProgram->setUniformValue("u_modelMatrix" , _modelMatrix);
+    shaderProgram->setUniformValue("u_modelMatrix" , modelMatrix);
 
 
     int offset = 0;
@@ -120,31 +111,4 @@ void SimpleObject3D::Draw(QOpenGLShaderProgram* shaderProgram, QOpenGLFunctions*
     _vertexesBuffer.release();
     _indexesBuffer.release();
     _texture->release();
-}
-
-
-
-void SimpleObject3D::Rotate(const QQuaternion& rotation)
-{
-
-}
-
-
-void SimpleObject3D::Translate(const QVector3D& translateVector)
-{
-    _modelMatrix.translate(translateVector);
-}
-
-
-void SimpleObject3D::Scale(const QVector3D& scaleVector)
-{
-
-}
-
-
-
-
-void SimpleObject3D::SetGlobalTransform(QMatrix4x4& globalMatrix)
-{
-
 }

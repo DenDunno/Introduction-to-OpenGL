@@ -33,19 +33,11 @@ class SimpleObject3D : public TransformableObject
 {
 private:
 
-    QQuaternion _rotation;
-    QVector3D _translation;
-    QVector3D _scale;
-
-    QMatrix4x4 _modelMatrix;
-    QMatrix4x4 _globalTransform;
-
     QOpenGLBuffer _vertexesBuffer;
     QOpenGLBuffer _indexesBuffer;
-    QOpenGLTexture* _texture;
+    QOpenGLTexture* _texture = 0;
 
-    void ClearBuffers();
-    void InitFields();
+    void Clear();
 
 public:
 
@@ -54,13 +46,7 @@ public:
    ~SimpleObject3D();
 
     void Init(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture);
-    void Draw(QOpenGLShaderProgram* program , QOpenGLFunctions* functions);
-
-    void Rotate(const QQuaternion& rotation);
-    void Translate(const QVector3D& translateVector);
-    void Scale(const QVector3D& scaleVector);
-
-    void SetGlobalTransform(QMatrix4x4& globalMatrix);
+    void Draw(QOpenGLShaderProgram* program , QOpenGLFunctions* functions) override;
 };
 
 #endif // SIMPLEOBJECT3D_H

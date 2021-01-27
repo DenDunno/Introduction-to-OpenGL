@@ -1,5 +1,6 @@
 #include "widget.h"
 #include"simpleobject3d.h"
+#include "group3d.h"
 #include <QMouseEvent>
 #include <QOpenGLContext>
 
@@ -18,11 +19,23 @@ void Widget::initializeGL()
     glEnable(GL_CULL_FACE);
 
     initShaders();
-    initCube(1);
-    _objects[0]->Translate(QVector3D(-0.6 , 0 , 0));
 
-    initCube(1);
-    _objects[1]->Translate(QVector3D(0.6, 0 , 0));
+    float step = 2.0f;
+
+
+    for (int x = -step ; x <= step ; x += step)
+    {
+        for (int y = -step ; y <= step ; y += step)
+        {
+            for (int z = -step ; z <= step ; z += step)
+            {
+                initCube(1);
+                _singleObjects.back()->Translate(QVector3D(x , y , z));
+
+            }
+        }
+    }
+
 }
 
 
@@ -50,9 +63,9 @@ void Widget::paintGL()
     _renderProgram.setUniformValue("u_lightPosition" , QVector4D(0 , 0 , 0 , 1));
     _renderProgram.setUniformValue("u_lightPower" , 3.0f);
 
-    for (int i = 0 ; i < _objects.size() ; ++i)
+    for (int i = 0 ; i < _transformableObjects.size() ; ++i)
     {
-        _objects[i]->Draw(&_renderProgram , context()->functions());
+        _transformableObjects[i]->Draw(&_renderProgram , context()->functions());
     }
 }
 
@@ -163,6 +176,6 @@ void Widget::initCube(float width)
         indexes.push_back(i + 3);
     }
 
-    _objects.push_back(new SimpleObject3D(vertexes , indexes , QImage(":/wood.png")));
+    _singleObjects.push_back(new SimpleObject3D(vertexes , indexes , QImage(":/wood.png")));
 }
 
