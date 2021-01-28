@@ -94,7 +94,7 @@ void Widget::paintGL()
     _renderProgram.bind();
     _renderProgram.setUniformValue("u_projectionMatrix" , _projectionMatrix);
     _renderProgram.setUniformValue("u_lightPosition" , QVector4D(0 , 0 , 0 , 1));
-    _renderProgram.setUniformValue("u_lightPower" , 20.0f);
+    _renderProgram.setUniformValue("u_lightPower" , 1.0f);
 
     _camera->Draw(&_renderProgram , context()->functions());
     for (int i = 0 ; i < _transformableObjects.size() ; ++i)
