@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QOpenGLContext>
 #include <QtMath>
+#include <QKeyEvent>
 
 
 Widget::Widget(QWidget *parent): QOpenGLWidget(parent)
@@ -23,6 +24,8 @@ void Widget::initializeGL()
 
     initShaders();
 
+
+    ////////////////////////   TEMPORARY   /////////////////////////
 
     float step = 2.0f;
 
@@ -65,9 +68,11 @@ void Widget::initializeGL()
     _groups.back()->AddObject(_groups[0]);
     _groups.back()->AddObject(_groups[1]);
 
-
-    _groups[1]->AddObject(_camera);
+    _groups[0]->AddObject(_camera);
     _transformableObjects.push_back(_groups.back());
+
+    ////////////////////////   TEMPORARY_END   //////////////////////
+
 
     _timer.start(30 , this);
 }
@@ -180,6 +185,34 @@ void Widget::timerEvent(QTimerEvent* event)
 
     update();
 }
+
+
+
+////////////////////////   TEMPORARY   /////////////////////////
+
+void Widget::keyPressEvent(QKeyEvent* event)
+{
+    switch (event->key())
+    {
+    case Qt::Key_Left:
+    _groups[0]->RemoveObject(_camera);
+    _groups[1]->AddObject(_camera);
+    break;
+
+    case Qt::Key_Right:
+    _groups[1]->RemoveObject(_camera);
+    _groups[0]->AddObject(_camera);
+    break;
+
+    case Qt::Key_Down:
+    _groups[0]->RemoveObject(_camera);
+    _groups[1]->RemoveObject(_camera);
+    break;
+    }
+}
+
+////////////////////////   TEMPORARY_END   //////////////////////
+
 
 
 

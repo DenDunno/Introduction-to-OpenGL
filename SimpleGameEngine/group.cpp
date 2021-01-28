@@ -41,3 +41,15 @@ void Group::AddObject(TransformableObject* object)
 }
 
 
+void Group::RemoveObject(TransformableObject* object)
+{
+    _objects.removeAll(object);
+}
+
+
+void Group::RemoveObject(const int index)
+{
+    _objects.remove(index);
+}
+
+

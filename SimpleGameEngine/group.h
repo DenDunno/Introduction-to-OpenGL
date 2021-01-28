@@ -19,6 +19,8 @@ public:
     void RebuildMatrix() override;
 
     void AddObject(TransformableObject* object);
+    void RemoveObject(TransformableObject* object);
+    void RemoveObject(const int index);
 
 
 };
