@@ -1,7 +1,5 @@
 #ifndef WIDGET_H
 #define WIDGET_H
-
-#include "camera.h"
 #include <QOpenGLWidget>
 #include <QMatrix4x4>
 #include <QOpenGLShaderProgram>
@@ -13,6 +11,7 @@
 class SimpleObject3D;
 class Group;
 class TransformableObject;
+class Camera;
 
 
 class Widget : public QOpenGLWidget
@@ -27,7 +26,7 @@ private:
 
     QOpenGLShaderProgram _renderProgram;
 
-    Camera _camera;
+    Camera* _camera;
     QMatrix4x4 _projectionMatrix;
     QVector2D _mousePosition;
 

@@ -1,6 +1,8 @@
 #include "widget.h"
 #include"simpleobject3d.h"
 #include "group.h"
+#include "camera.h"
+
 #include <QMouseEvent>
 #include <QOpenGLContext>
 #include <QtMath>
@@ -8,6 +10,7 @@
 
 Widget::Widget(QWidget *parent): QOpenGLWidget(parent)
 {
+    _camera = new Camera();
 }
 
 
@@ -32,13 +35,13 @@ void Widget::initializeGL()
             for (int z = -step ; z <= step ; z += step)
             {
                 initCube(1);
-                _singleObjects.back()->Translate(QVector3D(x , y , z));
+                _singleObjects.back()->Translate(x , y , z);
                 _groups.back()->AddObject(_singleObjects.back());
             }
         }
     }
 
-    _groups.back()->Translate(QVector3D(-4 , 0 , 0));
+    _groups.back()->Translate(-4 , 0 , 0);
 
     _groups.push_back(new Group());
 
@@ -49,13 +52,13 @@ void Widget::initializeGL()
             for (int z = -step ; z <= step ; z += step)
             {
                 initCube(1);
-                _singleObjects.back()->Translate(QVector3D(x , y , z));
+                _singleObjects.back()->Translate(x , y , z);
                 _groups.back()->AddObject(_singleObjects.back());
             }
         }
     }
 
-    _groups.back()->Translate(QVector3D(4 , 0 , 0));
+    _groups.back()->Translate(4 , 0 , 0);
 
 
     _groups.push_back(new Group());
@@ -63,8 +66,9 @@ void Widget::initializeGL()
     _groups.back()->AddObject(_groups[1]);
 
 
+    _groups[1]->AddObject(_camera);
     _transformableObjects.push_back(_groups.back());
-    _transformableObjects.push_back(&_camera);
+
     _timer.start(30 , this);
 }
 
@@ -87,6 +91,7 @@ void Widget::paintGL()
     _renderProgram.setUniformValue("u_lightPosition" , QVector4D(0 , 0 , 0 , 1));
     _renderProgram.setUniformValue("u_lightPower" , 20.0f);
 
+    _camera->Draw(&_renderProgram , context()->functions());
     for (int i = 0 ; i < _transformableObjects.size() ; ++i)
     {
         _transformableObjects[i]->Draw(&_renderProgram , context()->functions());
@@ -118,7 +123,7 @@ void Widget::mouseMoveEvent(QMouseEvent* event)
     float angle = delta.length() / 2;
     QVector3D rotationVector = QVector3D(delta.y() , delta.x() , 0);
 
-    _camera.Rotate(QQuaternion::fromAxisAndAngle(rotationVector , angle));
+    _camera->Rotate(QQuaternion::fromAxisAndAngle(rotationVector , angle));
 
     event->accept();
     update();
@@ -130,10 +135,10 @@ void Widget::wheelEvent(QWheelEvent* event)
     float zoomSpeed = 0.25;
     float delta = event->angleDelta().y();
 
-    if (delta > 0) // inverted
+    if (delta < 0)
         zoomSpeed = -zoomSpeed;
 
-    _camera.Translate(QVector3D(0 , 0 , zoomSpeed));
+    _camera->Translate(0 , 0 , zoomSpeed);
 
     event->accept();
     update();

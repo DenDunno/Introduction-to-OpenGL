@@ -47,6 +47,7 @@ public:
 
     void Init(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture);
     void Draw(QOpenGLShaderProgram* program , QOpenGLFunctions* functions) override;
+    void RebuildMatrix() override;
 };
 
 #endif // SIMPLEOBJECT3D_H

@@ -65,6 +65,7 @@ void SimpleObject3D::Init(const QVector<VertexData>& vertexData, const QVector<G
 }
 
 
+
 void SimpleObject3D::Draw(QOpenGLShaderProgram* shaderProgram, QOpenGLFunctions* functions)
 {
     if (_vertexesBuffer.isCreated() == false || _indexesBuffer.isCreated() == false)
@@ -72,19 +73,12 @@ void SimpleObject3D::Draw(QOpenGLShaderProgram* shaderProgram, QOpenGLFunctions*
         return;
     }
 
-    QMatrix4x4 modelMatrix;
-    modelMatrix.setToIdentity();
-    modelMatrix.translate(_translation.toVector3D());
-    modelMatrix.rotate(_rotation);
-    modelMatrix.scale(_scale);
-    modelMatrix = _globalTransform * modelMatrix;
-
     _vertexesBuffer.bind();
     _indexesBuffer.bind();
     _texture->bind(0);
 
     shaderProgram->setUniformValue("u_texture" , 0);
-    shaderProgram->setUniformValue("u_modelMatrix" , modelMatrix);
+    shaderProgram->setUniformValue("u_modelMatrix" , _matrix);
 
 
     int offset = 0;
@@ -111,4 +105,12 @@ void SimpleObject3D::Draw(QOpenGLShaderProgram* shaderProgram, QOpenGLFunctions*
     _vertexesBuffer.release();
     _indexesBuffer.release();
     _texture->release();
+}
+
+
+
+void SimpleObject3D::RebuildMatrix()
+{
+    TransformableObject::RebuildMatrix();
+    _matrix = _globalTransform * _matrix;
 }

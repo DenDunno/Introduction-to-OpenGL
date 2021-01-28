@@ -16,7 +16,10 @@ public:
     Group();
 
     void Draw(QOpenGLShaderProgram* program , QOpenGLFunctions* functions) override;
+    void RebuildMatrix() override;
+
     void AddObject(TransformableObject* object);
+
 
 };
 

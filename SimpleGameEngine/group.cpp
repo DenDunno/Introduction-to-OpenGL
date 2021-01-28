@@ -3,23 +3,29 @@
 
 Group::Group()
 {
+    _matrix.setToIdentity(); // local matrix
     _globalTransform.setToIdentity();
 }
 
 
 void Group::Draw(QOpenGLShaderProgram* program, QOpenGLFunctions* functions)
+{    
+    for (int i = 0 ; i < _objects.size() ; ++i)
+    {
+        _objects[i]->Draw(program , functions);
+    }
+}
+
+
+void Group::RebuildMatrix()
 {
-    QMatrix4x4 localMatrix;
-    localMatrix.setToIdentity();
-    localMatrix.translate(_translation.toVector3D());
-    localMatrix.rotate(_rotation);
-    localMatrix.scale(_scale);
-    localMatrix = _globalTransform * localMatrix;
+    TransformableObject::RebuildMatrix();
+
+    _matrix = _globalTransform * _matrix;
 
     for (int i = 0 ; i < _objects.size() ; ++i)
     {
-        _objects[i]->SetGlobalTransform(localMatrix);
-        _objects[i]->Draw(program , functions);
+        _objects[i]->SetGlobalTransform(_matrix);
     }
 }
 
@@ -28,6 +34,10 @@ void Group::Draw(QOpenGLShaderProgram* program, QOpenGLFunctions* functions)
 void Group::AddObject(TransformableObject* object)
 {
     _objects.push_back(object);
+
+    TransformableObject::RebuildMatrix();
+    _matrix = _globalTransform * _matrix;
+    _objects.back()->SetGlobalTransform(_matrix);
 }
 
 
