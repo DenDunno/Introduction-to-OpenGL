@@ -1,6 +1,7 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#include "camera.h"
 #include <QOpenGLWidget>
 #include <QMatrix4x4>
 #include <QOpenGLShaderProgram>
@@ -10,7 +11,7 @@
 
 
 class SimpleObject3D;
-class Group3D;
+class Group;
 class TransformableObject;
 
 
@@ -21,16 +22,14 @@ class Widget : public QOpenGLWidget
 private:
 
     QVector<SimpleObject3D* > _singleObjects;
-    QVector<Group3D* > _groups;
+    QVector<Group* > _groups;
     QVector<TransformableObject* > _transformableObjects;
 
     QOpenGLShaderProgram _renderProgram;
 
+    Camera _camera;
     QMatrix4x4 _projectionMatrix;
     QVector2D _mousePosition;
-    QQuaternion _rotation;
-
-    float _viewMatrix_Z;
 
     QBasicTimer _timer;
     float angObj;

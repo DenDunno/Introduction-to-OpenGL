@@ -1,17 +1,17 @@
-#include "group3d.h"
+#include "group.h"
 
 
-Group3D::Group3D()
+Group::Group()
 {
     _globalTransform.setToIdentity();
 }
 
 
-void Group3D::Draw(QOpenGLShaderProgram* program, QOpenGLFunctions* functions)
+void Group::Draw(QOpenGLShaderProgram* program, QOpenGLFunctions* functions)
 {
     QMatrix4x4 localMatrix;
     localMatrix.setToIdentity();
-    localMatrix.translate(_translation);
+    localMatrix.translate(_translation.toVector3D());
     localMatrix.rotate(_rotation);
     localMatrix.scale(_scale);
     localMatrix = _globalTransform * localMatrix;
@@ -25,7 +25,7 @@ void Group3D::Draw(QOpenGLShaderProgram* program, QOpenGLFunctions* functions)
 
 
 
-void Group3D::AddObject(TransformableObject* object)
+void Group::AddObject(TransformableObject* object)
 {
     _objects.push_back(object);
 }

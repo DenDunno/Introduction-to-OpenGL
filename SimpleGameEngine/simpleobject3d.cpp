@@ -74,7 +74,7 @@ void SimpleObject3D::Draw(QOpenGLShaderProgram* shaderProgram, QOpenGLFunctions*
 
     QMatrix4x4 modelMatrix;
     modelMatrix.setToIdentity();
-    modelMatrix.translate(_translation);
+    modelMatrix.translate(_translation.toVector3D());
     modelMatrix.rotate(_rotation);
     modelMatrix.scale(_scale);
     modelMatrix = _globalTransform * modelMatrix;

@@ -1,6 +1,6 @@
 #include "widget.h"
 #include"simpleobject3d.h"
-#include "group3d.h"
+#include "group.h"
 #include <QMouseEvent>
 #include <QOpenGLContext>
 #include <QtMath>
@@ -8,7 +8,6 @@
 
 Widget::Widget(QWidget *parent): QOpenGLWidget(parent)
 {
-    _viewMatrix_Z = -3.5;
 }
 
 
@@ -24,7 +23,7 @@ void Widget::initializeGL()
 
     float step = 2.0f;
 
-    _groups.push_back(new Group3D());
+    _groups.push_back(new Group());
 
     for (int x = -step ; x <= step ; x += step)
     {
@@ -37,11 +36,11 @@ void Widget::initializeGL()
                 _groups.back()->AddObject(_singleObjects.back());
             }
         }
-    }   
+    }
 
     _groups.back()->Translate(QVector3D(-4 , 0 , 0));
 
-    _groups.push_back(new Group3D());
+    _groups.push_back(new Group());
 
     for (int x = -step ; x <= step ; x += step)
     {
@@ -59,12 +58,13 @@ void Widget::initializeGL()
     _groups.back()->Translate(QVector3D(4 , 0 , 0));
 
 
-    _groups.push_back(new Group3D());
+    _groups.push_back(new Group());
     _groups.back()->AddObject(_groups[0]);
     _groups.back()->AddObject(_groups[1]);
 
 
     _transformableObjects.push_back(_groups.back());
+    _transformableObjects.push_back(&_camera);
     _timer.start(30 , this);
 }
 
@@ -82,14 +82,8 @@ void Widget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    QMatrix4x4 viewMatrix;
-    viewMatrix.setToIdentity();
-    viewMatrix.translate(0 , 0 , _viewMatrix_Z);
-    viewMatrix.rotate(_rotation);
-
     _renderProgram.bind();
     _renderProgram.setUniformValue("u_projectionMatrix" , _projectionMatrix);
-    _renderProgram.setUniformValue("u_viewMatrix" , viewMatrix);
     _renderProgram.setUniformValue("u_lightPosition" , QVector4D(0 , 0 , 0 , 1));
     _renderProgram.setUniformValue("u_lightPower" , 20.0f);
 
@@ -124,7 +118,7 @@ void Widget::mouseMoveEvent(QMouseEvent* event)
     float angle = delta.length() / 2;
     QVector3D rotationVector = QVector3D(delta.y() , delta.x() , 0);
 
-    _rotation = QQuaternion::fromAxisAndAngle(rotationVector , angle) * _rotation;
+    _camera.Rotate(QQuaternion::fromAxisAndAngle(rotationVector , angle));
 
     event->accept();
     update();
@@ -136,11 +130,10 @@ void Widget::wheelEvent(QWheelEvent* event)
     float zoomSpeed = 0.25;
     float delta = event->angleDelta().y();
 
-    if (delta > 0)
-        _viewMatrix_Z += zoomSpeed;
+    if (delta > 0) // inverted
+        zoomSpeed = -zoomSpeed;
 
-    else if (delta < 0)
-        _viewMatrix_Z -= zoomSpeed;
+    _camera.Translate(QVector3D(0 , 0 , zoomSpeed));
 
     event->accept();
     update();
@@ -149,6 +142,8 @@ void Widget::wheelEvent(QWheelEvent* event)
 
 void Widget::timerEvent(QTimerEvent* event)
 {
+    Q_UNUSED(event);
+
     for (int i = 0 ; i < _singleObjects.size(); ++i)
     {
         if (i % 2 == 0)
@@ -173,10 +168,10 @@ void Widget::timerEvent(QTimerEvent* event)
     _groups[2]->Rotate(QQuaternion::fromAxisAndAngle(0 , 0 , 1 , angMain));
 
 
-    angObj = angObj > 360 ? 0 : angObj + 3;
-    angGroup1 = angGroup1 > 360 ? 0 : angGroup1 + 2;
-    angGroup2 = angGroup2 > 360 ? 0 : angGroup2 + 2;
-    angMain = angMain > 360 ? 0 : angMain + 1;
+    angObj = ((int)angObj + 3) % 360;
+    angGroup1 = ((int)angGroup1 + 2) % 360;
+    angGroup2 = ((int)angGroup2 + 2) % 360;
+    angMain = ((int)angMain + 1) % 360;
 
     update();
 }

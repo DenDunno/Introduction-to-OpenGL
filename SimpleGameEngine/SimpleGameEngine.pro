@@ -9,14 +9,16 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    group3d.cpp \
+    camera.cpp \
+    group.cpp \
     main.cpp \
     simpleobject3d.cpp \
     transformableObject.cpp \
     widget.cpp
 
 HEADERS += \
-    group3d.h \
+    camera.h \
+    group.h \
     simpleobject3d.h \
     transformableobject.h \
     widget.h

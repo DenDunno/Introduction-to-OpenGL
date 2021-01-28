@@ -1,10 +1,10 @@
-#ifndef GROUP3D_H
-#define GROUP3D_H
+#ifndef GROUP_H
+#define GROUP_H
 
 #include "transformableobject.h"
 
 
-class Group3D : public TransformableObject
+class Group : public TransformableObject
 {
 
 private:
@@ -13,11 +13,11 @@ private:
 
 public:
 
-    Group3D();
+    Group();
 
     void Draw(QOpenGLShaderProgram* program , QOpenGLFunctions* functions) override;
     void AddObject(TransformableObject* object);
 
 };
 
-#endif // GROUP3D_H
+#endif // GROUP_H
