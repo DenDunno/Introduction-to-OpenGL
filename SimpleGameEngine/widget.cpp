@@ -1,5 +1,6 @@
 #include "widget.h"
 #include"simpleobject3d.h"
+#include "modelAssembling.h"
 #include "group.h"
 #include "camera.h"
 
@@ -29,6 +30,9 @@ void Widget::initializeGL()
 
     float step = 2.0f;
 
+    auto cubeVertexData = GetCubeVertexData(1.0f);
+    QImage cubeTexture = QImage(":/wood.png");
+
     _groups.push_back(new Group());
 
     for (int x = -step ; x <= step ; x += step)
@@ -37,7 +41,7 @@ void Widget::initializeGL()
         {
             for (int z = -step ; z <= step ; z += step)
             {
-                initCube(1);
+                _singleObjects.push_back(new SimpleObject3D(cubeVertexData.first , cubeVertexData.second , cubeTexture));
                 _singleObjects.back()->Translate(x , y , z);
                 _groups.back()->AddObject(_singleObjects.back());
             }
@@ -54,7 +58,7 @@ void Widget::initializeGL()
         {
             for (int z = -step ; z <= step ; z += step)
             {
-                initCube(1);
+                _singleObjects.push_back(new SimpleObject3D(cubeVertexData.first , cubeVertexData.second , cubeTexture));
                 _singleObjects.back()->Translate(x , y , z);
                 _groups.back()->AddObject(_singleObjects.back());
             }
@@ -226,54 +230,4 @@ void Widget::initShaders()
         close();
 }
 
-
-void Widget::initCube(float width)
-{
-    float widthHalf = width / 2;
-    QVector<VertexData> vertexes;
-    QVector<GLuint> indexes;
-
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , widthHalf  , widthHalf) , QVector2D(0 , 1) , QVector3D(0 , 0 , 1)));
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , -widthHalf , widthHalf) , QVector2D(0 , 0) , QVector3D(0 , 0 , 1)));
-    vertexes.push_back(VertexData(QVector3D(widthHalf  , widthHalf  , widthHalf) , QVector2D(1 , 1) , QVector3D(0 , 0 , 1)));
-    vertexes.push_back(VertexData(QVector3D(widthHalf  , -widthHalf , widthHalf) , QVector2D(1 , 0) , QVector3D(0 , 0 , 1)));
-
-    vertexes.push_back(VertexData(QVector3D(widthHalf , widthHalf  , widthHalf)  , QVector2D(0 , 1) , QVector3D(1 , 0 , 0)));
-    vertexes.push_back(VertexData(QVector3D(widthHalf , -widthHalf , widthHalf)  , QVector2D(0 , 0) , QVector3D(1 , 0 , 0)));
-    vertexes.push_back(VertexData(QVector3D(widthHalf , widthHalf  , -widthHalf) , QVector2D(1 , 1) , QVector3D(1 , 0 , 0)));
-    vertexes.push_back(VertexData(QVector3D(widthHalf , -widthHalf , -widthHalf) , QVector2D(1 , 0) , QVector3D(1 , 0 , 0)));
-
-    vertexes.push_back(VertexData(QVector3D(widthHalf  , widthHalf , widthHalf)  , QVector2D(0 , 1) , QVector3D(0 , 1 , 0)));
-    vertexes.push_back(VertexData(QVector3D(widthHalf  , widthHalf , -widthHalf) , QVector2D(0 , 0) , QVector3D(0 , 1 , 0)));
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , widthHalf , widthHalf)  , QVector2D(1 , 1) , QVector3D(0 , 1 , 0)));
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , widthHalf , -widthHalf) , QVector2D(1 , 0) , QVector3D(0 , 1 , 0)));
-
-    vertexes.push_back(VertexData(QVector3D(widthHalf  , widthHalf  , -widthHalf) , QVector2D(0 , 1) , QVector3D(0 , 0 , -1)));
-    vertexes.push_back(VertexData(QVector3D(widthHalf  , -widthHalf , -widthHalf) , QVector2D(0 , 0) , QVector3D(0 , 0 , -1)));
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , widthHalf  , -widthHalf) , QVector2D(1 , 1) , QVector3D(0 , 0 , -1)));
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , -widthHalf , -widthHalf) , QVector2D(1 , 0) , QVector3D(0 , 0 , -1)));
-
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , widthHalf  , widthHalf)  , QVector2D(0 , 1) , QVector3D(-1 , 0 , 0)));
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , widthHalf  , -widthHalf) , QVector2D(0 , 0) , QVector3D(-1 , 0 , 0)));
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , -widthHalf , widthHalf)  , QVector2D(1 , 1) , QVector3D(-1 , 0 , 0)));
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , -widthHalf , -widthHalf) , QVector2D(1 , 0) , QVector3D(-1 , 0 , 0)));
-
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , -widthHalf , widthHalf)  , QVector2D(0 , 1) , QVector3D(0 , -1 , 0)));
-    vertexes.push_back(VertexData(QVector3D(-widthHalf , -widthHalf , -widthHalf) , QVector2D(0 , 0) , QVector3D(0 , -1 , 0)));
-    vertexes.push_back(VertexData(QVector3D(widthHalf  , -widthHalf , widthHalf)  , QVector2D(1 , 1) , QVector3D(0 , -1 , 0)));
-    vertexes.push_back(VertexData(QVector3D(widthHalf  , -widthHalf , -widthHalf) , QVector2D(1 , 0) , QVector3D(0 , -1 , 0)));
-
-
-    for (int i = 0 ; i < 24 ; i += 4)
-    {
-        indexes.push_back(i + 0);
-        indexes.push_back(i + 1);
-        indexes.push_back(i + 2);
-        indexes.push_back(i + 2);
-        indexes.push_back(i + 1);
-        indexes.push_back(i + 3);
-    }
-
-    _singleObjects.push_back(new SimpleObject3D(vertexes , indexes , QImage(":/wood.png")));
-}
 

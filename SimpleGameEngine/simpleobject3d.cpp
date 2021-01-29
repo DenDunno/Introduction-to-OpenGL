@@ -1,4 +1,5 @@
 #include "simpleobject3d.h"
+
 #include <QOpenGLTexture>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
@@ -6,6 +7,7 @@
 
 SimpleObject3D::SimpleObject3D() : _indexesBuffer(QOpenGLBuffer::IndexBuffer)
 {
+    _matrix.setToIdentity(); // model matrix
     _globalTransform.setToIdentity();
 }
 
@@ -13,8 +15,10 @@ SimpleObject3D::SimpleObject3D() : _indexesBuffer(QOpenGLBuffer::IndexBuffer)
 SimpleObject3D::SimpleObject3D(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture) :
     _indexesBuffer(QOpenGLBuffer::IndexBuffer)
 {
+    _matrix.setToIdentity(); // model matrix
     _globalTransform.setToIdentity();
-    Init(vertexData , indexData , texture);
+
+    Bind(vertexData , indexData , texture);
 }
 
 
@@ -44,7 +48,7 @@ SimpleObject3D::~SimpleObject3D()
 
 
 
-void SimpleObject3D::Init(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture)
+void SimpleObject3D::Bind(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture)
 {
     Clear();
 

@@ -10,17 +10,23 @@ CONFIG += c++11
 
 SOURCES += \
     camera.cpp \
+    cube.cpp \
     group.cpp \
     main.cpp \
     simpleobject3d.cpp \
+    skybox.cpp \
     transformableObject.cpp \
     widget.cpp
 
 HEADERS += \
     camera.h \
+    cube.h \
     group.h \
+    modelAssembling.h \
     simpleobject3d.h \
+    skybox.h \
     transformableobject.h \
+    vertexData.h \
     widget.h
 
 

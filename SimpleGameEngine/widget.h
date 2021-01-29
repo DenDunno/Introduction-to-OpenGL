@@ -49,8 +49,6 @@ protected:
     void keyPressEvent(QKeyEvent* event);
 
     void initShaders();
-    void initCube(float width);
-
 
 public:
 
