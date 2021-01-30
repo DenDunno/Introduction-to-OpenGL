@@ -12,6 +12,7 @@ class SimpleObject3D;
 class Group;
 class TransformableObject;
 class Camera;
+class SkyBox;
 
 
 class Widget : public QOpenGLWidget
@@ -20,21 +21,24 @@ class Widget : public QOpenGLWidget
 
 private:
 
+    SkyBox* _skybox;
+
     QVector<SimpleObject3D* > _singleObjects;
     QVector<Group* > _groups;
     QVector<TransformableObject* > _transformableObjects;
 
     QOpenGLShaderProgram _renderProgram;
+    QOpenGLShaderProgram _shaderSkybox;
 
     Camera* _camera;
     QMatrix4x4 _projectionMatrix;
     QVector2D _mousePosition;
 
     QBasicTimer _timer;
-    float angObj;
-    float angGroup1;
-    float angGroup2;
-    float angMain;
+    float _angObj;
+    float _angGroup1;
+    float _angGroup2;
+    float _angMain;
 
 protected:
 
@@ -49,6 +53,7 @@ protected:
     void keyPressEvent(QKeyEvent* event);
 
     void initShaders();
+    bool tryInitShader(QOpenGLShaderProgram* program , QString vShaderPath , QString fShaderPath);
 
 public:
 

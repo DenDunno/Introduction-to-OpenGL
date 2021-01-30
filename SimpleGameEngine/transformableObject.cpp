@@ -1,6 +1,18 @@
 #include "transformableobject.h"
 
 
+TransformableObject::TransformableObject()
+{
+    _matrix.setToIdentity();
+    _globalTransform.setToIdentity();
+}
+
+TransformableObject::~TransformableObject()
+{
+}
+
+
+
 void TransformableObject::SetGlobalTransform(QMatrix4x4& globalMatrix)
 {
     _globalTransform = globalMatrix;

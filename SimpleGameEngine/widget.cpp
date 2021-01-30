@@ -1,13 +1,16 @@
 #include "widget.h"
 #include"simpleobject3d.h"
-#include "modelAssembling.h"
 #include "group.h"
 #include "camera.h"
+#include "modelAssembling.h"
+#include "skybox.h"
 
 #include <QMouseEvent>
 #include <QOpenGLContext>
 #include <QtMath>
 #include <QKeyEvent>
+
+
 
 
 Widget::Widget(QWidget *parent): QOpenGLWidget(parent)
@@ -27,10 +30,9 @@ void Widget::initializeGL()
 
 
     ////////////////////////   TEMPORARY   /////////////////////////
-
     float step = 2.0f;
 
-    auto cubeVertexData = GetCubeVertexData(1.0f);
+    modelData cubeModelData = GetCubeModelData(1.0f);
     QImage cubeTexture = QImage(":/wood.png");
 
     _groups.push_back(new Group());
@@ -41,7 +43,7 @@ void Widget::initializeGL()
         {
             for (int z = -step ; z <= step ; z += step)
             {
-                _singleObjects.push_back(new SimpleObject3D(cubeVertexData.first , cubeVertexData.second , cubeTexture));
+                _singleObjects.push_back(new SimpleObject3D(cubeModelData.first , cubeModelData.second , cubeTexture));
                 _singleObjects.back()->Translate(x , y , z);
                 _groups.back()->AddObject(_singleObjects.back());
             }
@@ -58,7 +60,7 @@ void Widget::initializeGL()
         {
             for (int z = -step ; z <= step ; z += step)
             {
-                _singleObjects.push_back(new SimpleObject3D(cubeVertexData.first , cubeVertexData.second , cubeTexture));
+                _singleObjects.push_back(new SimpleObject3D(cubeModelData.first , cubeModelData.second , cubeTexture));
                 _singleObjects.back()->Translate(x , y , z);
                 _groups.back()->AddObject(_singleObjects.back());
             }
@@ -74,9 +76,10 @@ void Widget::initializeGL()
 
     _groups[0]->AddObject(_camera);
     _transformableObjects.push_back(_groups.back());
-
     ////////////////////////   TEMPORARY_END   //////////////////////
 
+
+    _skybox = new SkyBox(100 , QImage(":/skybox.png"));
 
     _timer.start(30 , this);
 }
@@ -95,16 +98,25 @@ void Widget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    _shaderSkybox.bind();
+    _shaderSkybox.setUniformValue("u_projectionMatrix" , _projectionMatrix);
+    _camera->Draw(&_shaderSkybox , context()->functions());
+    _skybox->Draw(&_shaderSkybox , context()->functions());
+    _shaderSkybox.release();
+
+
     _renderProgram.bind();
     _renderProgram.setUniformValue("u_projectionMatrix" , _projectionMatrix);
     _renderProgram.setUniformValue("u_lightPosition" , QVector4D(0 , 0 , 0 , 1));
     _renderProgram.setUniformValue("u_lightPower" , 1.0f);
 
     _camera->Draw(&_renderProgram , context()->functions());
+
     for (int i = 0 ; i < _transformableObjects.size() ; ++i)
     {
         _transformableObjects[i]->Draw(&_renderProgram , context()->functions());
     }
+    _renderProgram.release();
 }
 
 
@@ -162,30 +174,30 @@ void Widget::timerEvent(QTimerEvent* event)
     {
         if (i % 2 == 0)
         {
-            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(1 , 0 , 0 , angObj));
-            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angObj));
+            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(1 , 0 , 0 , _angObj));
+            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , _angObj));
         }
         else
         {
-            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angObj));
-            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(1 , 0 , 0 , angObj));
+            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , _angObj));
+            _singleObjects[i]->Rotate(QQuaternion::fromAxisAndAngle(1 , 0 , 0 , _angObj));
         }
     }
 
-    _groups[0]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angGroup1));
-    _groups[0]->Rotate(QQuaternion::fromAxisAndAngle(0 , 0 , 1 , angGroup1));
+    _groups[0]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , _angGroup1));
+    _groups[0]->Rotate(QQuaternion::fromAxisAndAngle(0 , 0 , 1 , _angGroup1));
 
-    _groups[1]->Rotate(QQuaternion::fromAxisAndAngle(1 , 0 , 0 , angGroup2));
-    _groups[1]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angGroup2));
+    _groups[1]->Rotate(QQuaternion::fromAxisAndAngle(1 , 0 , 0 , _angGroup2));
+    _groups[1]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , _angGroup2));
 
-    _groups[2]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , angMain));
-    _groups[2]->Rotate(QQuaternion::fromAxisAndAngle(0 , 0 , 1 , angMain));
+    _groups[2]->Rotate(QQuaternion::fromAxisAndAngle(0 , 1 , 0 , _angMain));
+    _groups[2]->Rotate(QQuaternion::fromAxisAndAngle(0 , 0 , 1 , _angMain));
 
 
-    angObj = ((int)angObj + 3) % 360;
-    angGroup1 = ((int)angGroup1 + 2) % 360;
-    angGroup2 = ((int)angGroup2 + 2) % 360;
-    angMain = ((int)angMain + 1) % 360;
+    _angObj = ((int)_angObj + 3) % 360;
+    _angGroup1 = ((int)_angGroup1 + 2) % 360;
+    _angGroup2 = ((int)_angGroup2 + 2) % 360;
+    _angMain = ((int)_angMain + 1) % 360;
 
     update();
 }
@@ -193,7 +205,6 @@ void Widget::timerEvent(QTimerEvent* event)
 
 
 ////////////////////////   TEMPORARY   /////////////////////////
-
 void Widget::keyPressEvent(QKeyEvent* event)
 {
     switch (event->key())
@@ -214,7 +225,6 @@ void Widget::keyPressEvent(QKeyEvent* event)
     break;
     }
 }
-
 ////////////////////////   TEMPORARY_END   //////////////////////
 
 
@@ -222,12 +232,20 @@ void Widget::keyPressEvent(QKeyEvent* event)
 
 void Widget::initShaders()
 {
-    bool vShaderSucceeded = _renderProgram.addShaderFromSourceFile(QOpenGLShader::Vertex , ":/vertexShader.vsh");
-    bool fShaderSucceeded = _renderProgram.addShaderFromSourceFile(QOpenGLShader::Fragment , ":/fragmentShader.fsh");
-    bool linkSucceeded = _renderProgram.link();
+    bool success = tryInitShader(&_renderProgram , ":/vertexShader.vsh" , ":/fragmentShader.fsh");
+    success = success && tryInitShader(&_shaderSkybox , ":/skybox_VShader.vsh" , ":/skybox_FShader.fsh");
 
-    if (vShaderSucceeded && fShaderSucceeded && linkSucceeded == false)
-        close();
+    if (success == false)
+    close();
 }
 
+
+bool Widget::tryInitShader(QOpenGLShaderProgram* program , QString vShaderPath , QString fShaderPath)
+{
+    bool vShaderSucceeded = program->addShaderFromSourceFile(QOpenGLShader::Vertex , vShaderPath);
+    bool fShaderSucceeded = program->addShaderFromSourceFile(QOpenGLShader::Fragment , fShaderPath);
+    bool linkSucceeded = program->link();
+
+    return vShaderSucceeded && fShaderSucceeded && linkSucceeded;
+}
 

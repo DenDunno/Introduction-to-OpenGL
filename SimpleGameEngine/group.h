@@ -13,7 +13,7 @@ private:
 
 public:
 
-    Group();
+    ~Group() override;
 
     void Draw(QOpenGLShaderProgram* program , QOpenGLFunctions* functions) override;
     void RebuildMatrix() override;
@@ -21,8 +21,6 @@ public:
     void AddObject(TransformableObject* object);
     void RemoveObject(TransformableObject* object);
     void RemoveObject(const int index);
-
-
 };
 
 #endif // GROUP_H

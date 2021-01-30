@@ -27,6 +27,9 @@ protected:
 
 public:
 
+     TransformableObject();
+     virtual ~TransformableObject();
+
      virtual void Draw(QOpenGLShaderProgram* program , QOpenGLFunctions* functions) = 0;
      virtual void RebuildMatrix();
 

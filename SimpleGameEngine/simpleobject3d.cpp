@@ -7,17 +7,12 @@
 
 SimpleObject3D::SimpleObject3D() : _indexesBuffer(QOpenGLBuffer::IndexBuffer)
 {
-    _matrix.setToIdentity(); // model matrix
-    _globalTransform.setToIdentity();
 }
 
 
 SimpleObject3D::SimpleObject3D(const QVector<VertexData>& vertexData, const QVector<GLuint>& indexData, const QImage& texture) :
-    _indexesBuffer(QOpenGLBuffer::IndexBuffer)
+    SimpleObject3D()
 {
-    _matrix.setToIdentity(); // model matrix
-    _globalTransform.setToIdentity();
-
     Bind(vertexData , indexData , texture);
 }
 

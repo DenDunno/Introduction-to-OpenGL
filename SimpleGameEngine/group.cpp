@@ -1,10 +1,11 @@
 #include "group.h"
 
-
-Group::Group()
+Group::~Group()
 {
-    _matrix.setToIdentity(); // local matrix
-    _globalTransform.setToIdentity();
+    for (int i = 0 ; i < _objects.size() ; ++i)
+    {
+        delete _objects[i];
+    }
 }
 
 

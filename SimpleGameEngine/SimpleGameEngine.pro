@@ -10,9 +10,9 @@ CONFIG += c++11
 
 SOURCES += \
     camera.cpp \
-    cube.cpp \
     group.cpp \
     main.cpp \
+    modelAssembling.cpp \
     simpleobject3d.cpp \
     skybox.cpp \
     transformableObject.cpp \
@@ -20,7 +20,6 @@ SOURCES += \
 
 HEADERS += \
     camera.h \
-    cube.h \
     group.h \
     modelAssembling.h \
     simpleobject3d.h \

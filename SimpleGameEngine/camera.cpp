@@ -5,8 +5,6 @@
 
 Camera::Camera()
 {
-    _matrix.setToIdentity(); // view matrix
-    _globalTransform.setToIdentity();
     _translation = QVector3D(0 , 0, -10);
 }
 
