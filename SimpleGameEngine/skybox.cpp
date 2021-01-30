@@ -36,35 +36,35 @@ void SkyBox::Draw(QOpenGLShaderProgram* program, QOpenGLFunctions* functions)
 void SkyBox::SetTexture(QVector<VertexData>& vertexes)
 {
     // Behind
-    vertexes[0].TexturePosition  = QVector2D(1 , 2/3);
-    vertexes[1].TexturePosition  = QVector2D(1 , 1/3);
-    vertexes[2].TexturePosition  = QVector2D(3/4 , 2/3);
-    vertexes[3].TexturePosition  = QVector2D(3/4 , 1/3);
+    vertexes[0].TexturePosition  = QVector2D(1.0 , 2.0/3);
+    vertexes[1].TexturePosition  = QVector2D(1.0 , 1.0/3);
+    vertexes[2].TexturePosition  = QVector2D(3.0/4 , 2.0/3);
+    vertexes[3].TexturePosition  = QVector2D(3.0/4 , 1.0/3);
     // Right
-    vertexes[4].TexturePosition  = QVector2D(3/4 , 2/3);
-    vertexes[5].TexturePosition  = QVector2D(3/4 , 1/3);
-    vertexes[6].TexturePosition  = QVector2D(2/4 , 2/3);
-    vertexes[7].TexturePosition  = QVector2D(2/4 , 1/3);
+    vertexes[4].TexturePosition  = QVector2D(3.0/4 , 2.0/3);
+    vertexes[5].TexturePosition  = QVector2D(3.0/4 , 1.0/3);
+    vertexes[6].TexturePosition  = QVector2D(2.0/4 , 2.0/3);
+    vertexes[7].TexturePosition  = QVector2D(2.0/4 , 1.0/3);
     // Up
-    vertexes[8].TexturePosition  = QVector2D(2/4 , 1);
-    vertexes[9].TexturePosition  = QVector2D(2/4 , 2/3);
-    vertexes[10].TexturePosition = QVector2D(1/4 , 1);
-    vertexes[11].TexturePosition = QVector2D(1/4 , 2/3);
+    vertexes[8].TexturePosition  = QVector2D(2.0/4 , 1.0);
+    vertexes[9].TexturePosition  = QVector2D(2.0/4 , 2.0/3);
+    vertexes[10].TexturePosition = QVector2D(1.0/4 , 1.0);
+    vertexes[11].TexturePosition = QVector2D(1.0/4 , 2.0/3);
     // Front
-    vertexes[12].TexturePosition = QVector2D(2/4 , 2/3);
-    vertexes[13].TexturePosition = QVector2D(2/4 , 1/3);
-    vertexes[14].TexturePosition = QVector2D(1/4 , 2/3);
-    vertexes[15].TexturePosition = QVector2D(1/4 , 1/3);
+    vertexes[12].TexturePosition = QVector2D(2.0/4 , 2.0/3);
+    vertexes[13].TexturePosition = QVector2D(2.0/4 , 1.0/3);
+    vertexes[14].TexturePosition = QVector2D(1.0/4 , 2.0/3);
+    vertexes[15].TexturePosition = QVector2D(1.0/4 , 1.0/3);
     // Left
-    vertexes[16].TexturePosition = QVector2D(0 , 2/3);
-    vertexes[17].TexturePosition = QVector2D(1/4 , 2/3);
-    vertexes[18].TexturePosition = QVector2D(0 , 1/3);
-    vertexes[19].TexturePosition = QVector2D(1/4 , 1/3);
+    vertexes[16].TexturePosition = QVector2D(0.0 , 2.0/3);
+    vertexes[17].TexturePosition = QVector2D(1.0/4 , 2.0/3);
+    vertexes[18].TexturePosition = QVector2D(0.0 , 1.0/3);
+    vertexes[19].TexturePosition = QVector2D(1.0/4 , 1.0/3);
     // Down
-    vertexes[20].TexturePosition = QVector2D(1/4 , 0);
-    vertexes[21].TexturePosition = QVector2D(1/4 , 1/3);
-    vertexes[22].TexturePosition = QVector2D(2/4 , 0);
-    vertexes[23].TexturePosition = QVector2D(2/4 , 1/3);
+    vertexes[20].TexturePosition = QVector2D(1.0/4 , 0.0);
+    vertexes[21].TexturePosition = QVector2D(1.0/4 , 1.0/3);
+    vertexes[22].TexturePosition = QVector2D(2.0/4 , 0.0);
+    vertexes[23].TexturePosition = QVector2D(2.0/4 , 1.0/3);
 }
 
 

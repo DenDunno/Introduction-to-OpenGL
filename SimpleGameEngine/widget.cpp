@@ -79,7 +79,7 @@ void Widget::initializeGL()
     ////////////////////////   TEMPORARY_END   //////////////////////
 
 
-    _skybox = new SkyBox(100 , QImage(":/skybox.png"));
+    _skybox = new SkyBox(200 , QImage(":/skybox2.png"));
 
     _timer.start(30 , this);
 }
@@ -90,7 +90,7 @@ void Widget::resizeGL(int width, int height)
     float aspect = width / (float)height;
 
     _projectionMatrix.setToIdentity();
-    _projectionMatrix.perspective(45 , aspect , 0.1 , 100);
+    _projectionMatrix.perspective(45 , aspect , 0.1 , 1000);
 }
 
 

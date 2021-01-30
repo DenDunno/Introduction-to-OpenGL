@@ -9,7 +9,12 @@ varying highp vec2 v_textCoord;
 
 void main(void)
 {
-    mat4 modelviewMatrix = u_viewMatrix * u_modelMatrix;
+    mat4 viewMatrix = u_viewMatrix;
+    viewMatrix[3][0] = 0.0f;
+    viewMatrix[3][1] = 0.0f;
+    viewMatrix[3][2] = 0.0f;
+
+    mat4 modelviewMatrix = viewMatrix * u_modelMatrix;
     gl_Position = u_projectionMatrix * modelviewMatrix * a_position;
     v_textCoord = a_textCoord;
 }
