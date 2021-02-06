@@ -19,6 +19,13 @@ Widget::Widget(QWidget *parent): QOpenGLWidget(parent)
 }
 
 
+Widget::~Widget()
+{
+    for (int i = 0 ; i < _transformableObjects.size() ; ++i)
+        delete _transformableObjects[i];
+}
+
+
 void Widget::initializeGL()
 {
     glClearColor(0.0 , 0.0 , 0.0 , 1.0);
@@ -247,5 +254,57 @@ bool Widget::tryInitShader(QOpenGLShaderProgram* program , QString vShaderPath ,
     bool linkSucceeded = program->link();
 
     return vShaderSucceeded && fShaderSucceeded && linkSucceeded;
+}
+
+
+
+void Widget::loadObj(const QString& path)
+{
+    QFile objFile(path);
+
+    QVector<QVector3D> vertexes;
+    QVector<QVector3D> normals;
+    QVector<QVector2D> texCoord;
+
+
+    if (objFile.exists() == false)
+    {
+        qDebug() << "File not found";
+        return;
+    }
+
+    objFile.open(QIODevice::ReadOnly);
+    QTextStream input(&objFile);
+
+    while (input.atEnd() == true)
+    {
+        QString str = input.readLine();
+        QStringList list = str.split(" ");
+
+        QString strCommand = list[0];
+
+        if (strCommand == "v")
+        {
+            vertexes.push_back(QVector3D(list[1].toFloat() , list[2].toFloat() , list[3].toFloat()));
+        }
+
+        else if (strCommand == "vn")
+        {
+            normals.push_back(QVector3D(list[1].toFloat() , list[2].toFloat() , list[3].toFloat()));
+        }
+
+        else if (strCommand == "vt")
+        {
+            texCoord.push_back(QVector2D(list[1].toFloat() , list[2].toFloat()));
+        }
+
+        else if (strCommand == "f")
+        {
+            texCoord.push_back(QVector2D(list[1].toFloat() , list[2].toFloat()));
+        }
+    }
+
+
+    objFile.close();
 }
 

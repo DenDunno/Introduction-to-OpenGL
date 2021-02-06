@@ -22,12 +22,15 @@ void Camera::RebuildMatrix()
     TransformableObject::RebuildMatrix();
 
     _matrix = _matrix * _globalTransform.inverted();
+    //_matrix = _globalTransform * _matrix;
+    //_matrix = _matrix.inverted();
 }
 
 
 void Camera::Rotate(const QQuaternion& newRotation)
 {
     _rotation = newRotation * _rotation;
+
     RebuildMatrix();
 }
 

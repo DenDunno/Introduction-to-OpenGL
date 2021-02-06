@@ -55,9 +55,12 @@ protected:
     void initShaders();
     bool tryInitShader(QOpenGLShaderProgram* program , QString vShaderPath , QString fShaderPath);
 
+    void loadObj(const QString& path);
+
 public:
 
     Widget(QWidget *parent = 0);
+    ~Widget();
 
 };
 
